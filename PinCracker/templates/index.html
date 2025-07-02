@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity PIN Challenge</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <i class="fas fa-shield-alt fa-4x text-primary mb-3"></i>
+                    <h1 class="display-4 mb-3">Cybersecurity PIN Challenge</h1>
+                    <p class="lead text-muted">Educational Brute Force Demonstration</p>
+                </div>
+
+                <!-- Warning Card -->
+                <div class="card border-warning mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Educational Purpose Only
+                        </h5>
+                        <p class="card-text">
+                            This application is designed for cybersecurity education and demonstration purposes. 
+                            Use responsibly and only test against systems you own or have explicit permission to test.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Challenge Description -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-target me-2"></i>
+                            The Challenge
+                        </h5>
+                        <p class="card-text">
+                            This server has a secret 4-digit PIN that you need to discover. The PIN consists of digits 0-9 
+                            and follows the format XXXX (e.g., 0123, 9876, 0000).
+                        </p>
+                        <p class="card-text">
+                            You can attempt to crack it using:
+                        </p>
+                        <ul>
+                            <li><strong>Manual attempts:</strong> Use the web interface to guess individual PINs</li>
+                            <li><strong>Automated brute force:</strong> Use the provided Python script to systematically test all possibilities</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- API Information -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-code me-2"></i>
+                            API Endpoint
+                        </h5>
+                        <p class="card-text">
+                            <strong>Endpoint:</strong> <code>POST /check</code><br>
+                            <strong>Parameter:</strong> <code>pin</code> (4-digit string)<br>
+                            <strong>Success Response:</strong> <code>{"result": "correct", "pin": "XXXX"}</code><br>
+                            <strong>Failure Response:</strong> <code>{"result": "incorrect"}</code>
+                        </p>
+                        
+                        <h6 class="mt-3">Example Usage:</h6>
+                        <pre class="bg-dark text-light p-3 rounded"><code>curl -X POST http://localhost:5000/check -d "pin=1234"</code></pre>
+                        
+                        <div class="mt-3">
+                            <a href="/api-docs" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-book me-1"></i>
+                                Full API Documentation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools Section -->
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-mouse-pointer me-2"></i>
+                                    Manual Challenge
+                                </h5>
+                                <p class="card-text">
+                                    Try to guess the PIN manually using the web interface. 
+                                    Good for understanding the basics of PIN security.
+                                </p>
+                                <a href="/challenge" class="btn btn-primary">
+                                    <i class="fas fa-play me-1"></i>
+                                    Start Manual Challenge
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-crosshairs me-2"></i>
+                                    Web Attack Tool
+                                </h5>
+                                <p class="card-text">
+                                    Use the web-based brute force tool to attack any PIN endpoint. 
+                                    Real-time monitoring with configurable settings.
+                                </p>
+                                <a href="/attack" class="btn btn-danger">
+                                    <i class="fas fa-rocket me-1"></i>
+                                    Launch Attack Tool
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-terminal me-2"></i>
+                                    CLI Script
+                                </h5>
+                                <p class="card-text">
+                                    Download and use the Python command-line script for 
+                                    advanced users and automation.
+                                </p>
+                                <div class="mt-3">
+                                    <pre class="bg-dark text-light p-2 rounded small"><code>python pin_cracker.py --url http://target.com/check</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Live Statistics
+                        </h5>
+                        <p class="card-text">
+                            Monitor attack attempts and success rates in real-time.
+                        </p>
+                        <div class="d-flex gap-2">
+                            <a href="/stats" class="btn btn-outline-info">
+                                <i class="fas fa-chart-line me-1"></i>
+                                JSON Stats
+                            </a>
+                            <a href="/database" class="btn btn-outline-success">
+                                <i class="fas fa-database me-1"></i>
+                                Database Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            Learning Objectives
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Security Concepts:</h6>
+                                <ul>
+                                    <li>Brute force attack methodology</li>
+                                    <li>PIN security weaknesses</li>
+                                    <li>Rate limiting importance</li>
+                                    <li>Threading and performance optimization</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Technical Skills:</h6>
+                                <ul>
+                                    <li>HTTP POST request handling</li>
+                                    <li>Multi-threaded programming</li>
+                                    <li>Error handling and timeout management</li>
+                                    <li>API interaction and testing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

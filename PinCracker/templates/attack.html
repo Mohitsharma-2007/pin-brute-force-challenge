@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIN Brute Force Attack Tool</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .attack-status {
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: var(--bs-dark);
+            border: 1px solid var(--bs-secondary);
+            border-radius: 0.375rem;
+        }
+        .log-entry {
+            padding: 0.25rem 0.75rem;
+            border-bottom: 1px solid var(--bs-gray-800);
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        .log-success { color: var(--bs-success); }
+        .log-error { color: var(--bs-danger); }
+        .log-info { color: var(--bs-info); }
+        .log-warning { color: var(--bs-warning); }
+        #attackForm.attacking {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <a href="/" class="btn btn-outline-secondary mb-3">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Back to Home
+                    </a>
+                    <h1 class="display-5 mb-3">
+                        <i class="fas fa-crosshairs me-2"></i>
+                        PIN Brute Force Attack Tool
+                    </h1>
+                    <p class="lead text-muted">Automated PIN Cracking for Educational Testing</p>
+                </div>
+
+                <!-- Warning -->
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Educational Use Only:</strong> Only attack systems you own or have explicit permission to test.
+                </div>
+
+                <!-- Attack Configuration -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            Attack Configuration
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="attackForm">
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="targetUrl" class="form-label">Target URL</label>
+                                    <input 
+                                        type="url" 
+                                        class="form-control" 
+                                        id="targetUrl" 
+                                        placeholder="https://example.com/check-pin"
+                                        required
+                                    >
+                                    <div class="form-text">
+                                        Enter the complete URL of the PIN checking endpoint
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="threads" class="form-label">Threads</label>
+                                    <select class="form-select" id="threads">
+                                        <option value="5">5 (Safe)</option>
+                                        <option value="10" selected>10 (Balanced)</option>
+                                        <option value="20">20 (Fast)</option>
+                                        <option value="50">50 (Aggressive)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="delay" class="form-label">Delay (seconds)</label>
+                                    <select class="form-select" id="delay">
+                                        <option value="0" selected>0 (No delay)</option>
+                                        <option value="0.1">0.1 (Rate limiting protection)</option>
+                                        <option value="0.5">0.5 (Conservative)</option>
+                                        <option value="1">1 (Very conservative)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="timeout" class="form-label">Timeout (seconds)</label>
+                                    <select class="form-select" id="timeout">
+                                        <option value="3">3</option>
+                                        <option value="5" selected>5</option>
+                                        <option value="10">10</option>
+                                        <option value="30">30</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="verbose">
+                                <label class="form-check-label" for="verbose">
+                                    Verbose logging (show all attempts)
+                                </label>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-danger" id="startBtn">
+                                    <i class="fas fa-play me-1"></i>
+                                    Start Attack
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="stopBtn" style="display: none;">
+                                    <i class="fas fa-stop me-1"></i>
+                                    Stop Attack
+                                </button>
+                                <button type="button" class="btn btn-outline-info" id="testBtn">
+                                    <i class="fas fa-link me-1"></i>
+                                    Test Connection
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Attack Status -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-terminal me-2"></i>
+                            Attack Status
+                        </h5>
+                        <button class="btn btn-sm btn-outline-secondary" id="clearLog">
+                            <i class="fas fa-trash me-1"></i>
+                            Clear
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="attackStatus" class="attack-status">
+                            <div class="log-entry log-info">
+                                Ready to start attack. Configure target URL and click "Start Attack".
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="card" id="resultsCard" style="display: none;">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-trophy me-2"></i>
+                            Attack Results
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="attackResults"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let attackActive = false;
+        let eventSource = null;
+
+        const form = document.getElementById('attackForm');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const testBtn = document.getElementById('testBtn');
+        const clearBtn = document.getElementById('clearLog');
+        const statusDiv = document.getElementById('attackStatus');
+        const resultsCard = document.getElementById('resultsCard');
+        const resultsDiv = document.getElementById('attackResults');
+
+        function addLogEntry(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            statusDiv.appendChild(entry);
+            statusDiv.scrollTop = statusDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            statusDiv.innerHTML = '<div class="log-entry log-info">Log cleared.</div>';
+            resultsCard.style.display = 'none';
+        }
+
+        function setAttackState(active) {
+            attackActive = active;
+            form.classList.toggle('attacking', active);
+            startBtn.style.display = active ? 'none' : 'inline-block';
+            stopBtn.style.display = active ? 'inline-block' : 'none';
+            
+            if (active) {
+                startBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Attacking...';
+            } else {
+                startBtn.innerHTML = '<i class="fas fa-play me-1"></i>Start Attack';
+            }
+        }
+
+        // Test connection
+        testBtn.addEventListener('click', async () => {
+            const url = document.getElementById('targetUrl').value;
+            if (!url) {
+                addLogEntry('Please enter a target URL first', 'error');
+                return;
+            }
+
+            addLogEntry(`Testing connection to ${url}...`, 'info');
+            
+            try {
+                const response = await fetch('/test-connection', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({url: url})
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    addLogEntry(`✓ Connection successful! Response: ${result.status}`, 'success');
+                } else {
+                    addLogEntry(`✗ Connection failed: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                addLogEntry(`✗ Test failed: ${error.message}`, 'error');
+            }
+        });
+
+        // Start attack
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (attackActive) return;
+
+            const formData = {
+                target_url: document.getElementById('targetUrl').value,
+                threads: parseInt(document.getElementById('threads').value),
+                delay: parseFloat(document.getElementById('delay').value),
+                timeout: parseInt(document.getElementById('timeout').value),
+                verbose: document.getElementById('verbose').checked
+            };
+
+            addLogEntry('Starting brute force attack...', 'info');
+            addLogEntry(`Target: ${formData.target_url}`, 'info');
+            addLogEntry(`Configuration: ${formData.threads} threads, ${formData.delay}s delay`, 'info');
+            
+            setAttackState(true);
+
+            try {
+                // Start the attack via server-sent events
+                eventSource = new EventSource('/start-attack?' + new URLSearchParams(formData));
+                
+                eventSource.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'log') {
+                        addLogEntry(data.message, data.level || 'info');
+                    } else if (data.type === 'progress') {
+                        addLogEntry(`Progress: ${data.attempts}/10000 (${data.percentage}%) | Rate: ${data.rate}/s | ETA: ${data.eta}s`, 'info');
+                    } else if (data.type === 'success') {
+                        addLogEntry(`🎉 PIN FOUND: ${data.pin}`, 'success');
+                        addLogEntry(`Found in ${data.attempts} attempts (${data.time}s)`, 'success');
+                        showResults(data);
+                        setAttackState(false);
+                        eventSource.close();
+                    } else if (data.type === 'complete') {
+                        if (data.success) {
+                            addLogEntry('Attack completed successfully!', 'success');
+                        } else {
+                            addLogEntry('Attack completed - PIN not found', 'warning');
+                        }
+                        setAttackState(false);
+                        eventSource.close();
+                    } else if (data.type === 'error') {
+                        addLogEntry(`Error: ${data.message}`, 'error');
+                        setAttackState(false);
+                        eventSource.close();
+                    }
+                };
+
+                eventSource.onerror = function(event) {
+                    addLogEntry('Connection to server lost', 'error');
+                    setAttackState(false);
+                    eventSource.close();
+                };
+
+            } catch (error) {
+                addLogEntry(`Failed to start attack: ${error.message}`, 'error');
+                setAttackState(false);
+            }
+        });
+
+        // Stop attack
+        stopBtn.addEventListener('click', async () => {
+            if (eventSource) {
+                eventSource.close();
+            }
+            
+            try {
+                await fetch('/stop-attack', {method: 'POST'});
+                addLogEntry('Attack stopped by user', 'warning');
+            } catch (error) {
+                addLogEntry('Failed to stop attack cleanly', 'error');
+            }
+            
+            setAttackState(false);
+        });
+
+        // Clear log
+        clearBtn.addEventListener('click', clearLog);
+
+        function showResults(data) {
+            resultsDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-key me-2"></i>PIN Successfully Cracked!</h6>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Found PIN:</strong> <code class="fs-4">${data.pin}</code><br>
+                            <strong>Attempts:</strong> ${data.attempts} / 10,000<br>
+                            <strong>Time:</strong> ${data.time} seconds
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Success Rate:</strong> ${((data.attempts / 10000) * 100).toFixed(2)}%<br>
+                            <strong>Average Rate:</strong> ${data.rate} attempts/second<br>
+                            <strong>Target:</strong> <small>${data.target}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            resultsCard.style.display = 'block';
+        }
+
+        // Auto-focus URL input
+        document.getElementById('targetUrl').focus();
+    </script>
+</body>
+</html>

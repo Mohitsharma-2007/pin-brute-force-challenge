@@ -1,0 +1,106 @@
+/* Custom styles for the PIN Challenge application */
+
+/* PIN input styling */
+#pin {
+    letter-spacing: 0.5rem;
+    text-align: center;
+    background: var(--bs-dark);
+    border: 2px solid var(--bs-secondary);
+    color: var(--bs-light);
+}
+
+#pin:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+    background: var(--bs-dark);
+}
+
+/* Code blocks */
+pre {
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+}
+
+/* Cards with consistent spacing */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid var(--bs-border-color);
+}
+
+/* Alert styling */
+.alert {
+    border-radius: 0.5rem;
+}
+
+/* Button enhancements */
+.btn {
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+/* Icon spacing */
+.fas, .far {
+    width: 1.25em;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    #pin {
+        font-size: 1.5rem !important;
+    }
+}
+
+/* Loading animation for forms */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Status indicators */
+.text-success {
+    color: var(--bs-success) !important;
+}
+
+.text-danger {
+    color: var(--bs-danger) !important;
+}
+
+.text-warning {
+    color: var(--bs-warning) !important;
+}
+
+/* Code syntax highlighting improvements */
+code {
+    color: var(--bs-info);
+    background-color: var(--bs-dark);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+}
+
+/* Enhanced card hover effects for interactive elements */
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Progress indicator styles */
+.progress {
+    height: 1.5rem;
+    border-radius: 0.75rem;
+}
+
+/* Table styling for statistics */
+.table-dark {
+    --bs-table-bg: var(--bs-dark);
+    --bs-table-color: var(--bs-light);
+}
